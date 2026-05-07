@@ -4,6 +4,9 @@
 
 ---
 
+# FakeShop URL
+Link: https://fakeshop-angular.netlify.app/products
+
 ## English
 
 ### 1) What this project is
