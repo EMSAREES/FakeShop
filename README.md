@@ -5,7 +5,7 @@
 ---
 
 # FakeShop URL
-Link: fakeshop-angular.netlify.app
+Link: [fakeshop-angular.netlify.app](https://fakeshop-angular.netlify.app)
 
 ## English
 
