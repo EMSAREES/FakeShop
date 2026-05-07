@@ -1,1 +1,155 @@
 /* You can add global styles to this file, and also import other style files */
+// ============================================================
+// ESTILOS GLOBALES
+// Este archivo aplica a TODA la aplicación.
+// Los estilos de los componentes son locales (encapsulados).
+// Aquí van: resets, variables CSS, tipografía base, utilidades.
+// ============================================================
+
+// ─── 1. Reset moderno ────────────────────────────────────────────
+// box-sizing: border-box = el padding NO aumenta el tamaño del elemento
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+// Elimina márgenes y paddings por defecto del navegador
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+// ─── 2. Variables CSS ────────────────────────────────────────────
+// :root = selector del elemento raíz (<html>)
+// var(--nombre) permite usar estas variables en cualquier archivo
+:root {
+  // Colores principales
+  --color-primary:   #1a1a2e;
+  --color-secondary: #4a4a8a;
+  --color-accent:    #f59e0b;
+  --color-danger:    #e74c3c;
+  --color-success:   #16a34a;
+
+  // Grises
+  --color-gray-50:  #f8f8f8;
+  --color-gray-100: #f0f0f0;
+  --color-gray-200: #e0e0e0;
+  --color-gray-500: #888888;
+  --color-gray-700: #444444;
+  --color-gray-900: #1a1a1a;
+
+  // Tipografía
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-base: 16px;
+  --line-height-base: 1.6;
+
+  // Espaciados
+  --spacing-xs:  0.25rem;  // 4px
+  --spacing-sm:  0.5rem;   // 8px
+  --spacing-md:  1rem;     // 16px
+  --spacing-lg:  1.5rem;   // 24px
+  --spacing-xl:  2rem;     // 32px
+  --spacing-2xl: 3rem;     // 48px
+
+  // Radios de borde
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  // Sombras
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+// ─── 3. Tipografía base ───────────────────────────────────────────
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--color-gray-900);
+  background-color: var(--color-gray-50);
+  -webkit-font-smoothing: antialiased; // Texto más nítido en macOS
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Resetea estilos de encabezados
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-primary);
+}
+
+// Links sin subrayado por defecto
+a {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+// Botones — cursor pointer por defecto
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+// Imágenes responsivas
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+// ─── 4. Clases de utilidad ────────────────────────────────────────
+// Visually hidden — oculto visualmente pero leíble por lectores de pantalla
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+// Contenedor centrado
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+// ─── 5. Scrollbar personalizada ───────────────────────────────────
+// Solo en Webkit (Chrome, Edge, Safari)
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-200);
+  border-radius: 4px;
+
+  &:hover { background: #ccc; }
+}
+
+// ─── 6. Animaciones de entrada ────────────────────────────────────
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Aplica en cualquier componente con: animation: fadeInUp 0.3s ease;

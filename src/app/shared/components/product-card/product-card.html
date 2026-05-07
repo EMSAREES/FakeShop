@@ -1,0 +1,66 @@
+<!-- ============================================================
+  PRODUCT CARD TEMPLATE
+  Usa data binding de Angular:
+  [property]   = binding unidireccional (de TS → HTML)
+  (event)      = escuchar eventos del DOM
+  {{ expr }}   = interpolación (muestra un valor como texto)
+  *ngIf        = renderizado condicional
+  *ngFor       = renderizado de listas
+============================================================ -->
+
+<article
+  class="product-card"
+  (click)="goToDetail()"
+  role="button"
+  [attr.aria-label]="'Ver detalle de ' + product.title"
+  tabindex="0"
+  (keydown.enter)="goToDetail()"
+>
+  <!-- Imagen del producto con fallback si no carga -->
+  <div class="card-image-wrapper">
+    <img
+      [src]="product.image"
+      [alt]="product.title"
+      class="card-image"
+      loading="lazy"
+      (error)="$any($event.target).src = 'assets/img/placeholder.png'"
+    />
+    <!-- Badge de categoría -->
+    <span class="category-badge">{{ product.category }}</span>
+  </div>
+
+  <!-- Contenido de la tarjeta -->
+  <div class="card-body">
+    <h3 class="card-title" [title]="product.title">
+      {{ truncatedTitle }}
+    </h3>
+
+    <!-- Rating con estrellas -->
+    <div class="rating" aria-label="Calificación: {{ product.rating.rate }} de 5">
+      <span
+        *ngFor="let star of stars"
+        class="star"
+        [class.star--filled]="star === 1"
+        aria-hidden="true"
+      >★</span>
+      <span class="rating-count">({{ product.rating.count }})</span>
+    </div>
+
+    <!-- Footer de la tarjeta: precio + botón -->
+    <div class="card-footer">
+      <!-- currency pipe: 29.95 → $29.95 USD -->
+      <span class="price">{{ product.price | currency:'USD':'symbol':'1.2-2' }}</span>
+
+      <button
+        class="btn-cart"
+        [class.btn-cart--added]="isInCart"
+        (click)="onAddToCart($event)"
+        [attr.aria-label]="isInCart ? 'Ya en carrito' : 'Agregar al carrito'"
+        type="button"
+      >
+        <!-- Texto dinámico según el estado isInCart -->
+        {{ isInCart ? '✓ En carrito' : '+ Agregar' }}
+      </button>
+    </div>
+  </div>
+</article>

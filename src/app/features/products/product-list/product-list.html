@@ -1,0 +1,181 @@
+<!-- ============================================================
+  PRODUCT LIST TEMPLATE
+  Muestra la lista completa de productos con filtros y búsqueda.
+
+  SINTAXIS ANGULAR:
+  @if / @for = nueva sintaxis de control flow (Angular 17+)
+  Alternativa a *ngIf y *ngFor (más legible y performante)
+============================================================ -->
+
+<main class="product-list-page">
+
+  <!-- Header -->
+  <header class="page-header">
+    <div class="page-header__content">
+      <h1 class="page-header__title">Nuestros Productos</h1>
+      <p class="page-header__subtitle">{{ filteredProducts().length }} productos encontrados</p>
+    </div>
+
+    <div class="header-right">
+      <!-- Ordenar -->
+      <select class="sort-select" (change)="onSort($event)">
+        <option value="default">Ordenar por...</option>
+        <option value="price-asc">Precio: menor a mayor</option>
+        <option value="price-desc">Precio: mayor a menor</option>
+        <option value="rating">Mejor valorados</option>
+        <option value="name">Nombre A-Z</option>
+      </select>
+
+      <!-- Buscador -->
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input
+          type="search"
+          class="search-input"
+          placeholder="Buscar productos..."
+          (input)="onSearch($event)"
+        />
+      </div>
+
+      <!-- Toggle sidebar en móvil -->
+      <button class="btn-toggle-sidebar" (click)="toggleSidebar()" type="button">
+        ☰ Filtros
+      </button>
+    </div>
+  </header>
+
+  <!-- Layout con sidebar -->
+  <div class="layout" [class.layout--sidebar-closed]="!sidebarOpen()">
+
+    <!-- ── Sidebar de filtros ─────────────────────────────── -->
+    <aside class="sidebar" [class.sidebar--open]="sidebarOpen()">
+
+      <div class="sidebar__header">
+        <h2 class="sidebar__title">Filtros</h2>
+        <button class="btn-reset" (click)="resetFilters()" type="button">
+          Limpiar todo
+        </button>
+      </div>
+
+      <!-- Categorías -->
+      <div class="filter-group">
+        <h3 class="filter-group__title">Categoría</h3>
+        <ul class="filter-list">
+          <li>
+            <button
+              class="filter-option"
+              [class.filter-option--active]="selectedCategory() === 'all'"
+              (click)="selectCategory('all')"
+              type="button"
+            >
+              <span class="filter-option__check">✓</span>
+              Todos
+              <span class="filter-option__count">({{ products().length }})</span>
+            </button>
+          </li>
+          @for (cat of categories(); track cat) {
+            <li>
+              <button
+                class="filter-option"
+                [class.filter-option--active]="selectedCategory() === cat"
+                (click)="selectCategory(cat)"
+                type="button"
+              >
+                <span class="filter-option__check">✓</span>
+                {{ cat }}
+                <span class="filter-option__count">
+                  ({{ products().filter(p => p.category === cat).length }})
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Rango de precio -->
+      <div class="filter-group">
+        <h3 class="filter-group__title">Precio</h3>
+        <div class="price-range">
+          <div class="price-labels">
+            <span>${{ minPrice() }}</span>
+            <span>${{ maxPrice() }}</span>
+          </div>
+          <label class="range-label">Mínimo</label>
+          <input
+            type="range"
+            class="range-input"
+            [min]="0"
+            [max]="realMaxPrice()"
+            [value]="minPrice()"
+            (input)="onMinPrice($event)"
+          />
+          <label class="range-label">Máximo</label>
+          <input
+            type="range"
+            class="range-input"
+            [min]="0"
+            [max]="realMaxPrice()"
+            [value]="maxPrice()"
+            (input)="onMaxPrice($event)"
+          />
+        </div>
+      </div>
+
+      <!-- Rating mínimo -->
+      <div class="filter-group">
+        <h3 class="filter-group__title">Calificación mínima</h3>
+        <div class="rating-filters">
+          @for (r of [4, 3, 2, 1]; track r) {
+            <button
+              class="rating-option"
+              [class.rating-option--active]="minRating() === r"
+              (click)="onRating(r)"
+              type="button"
+            >
+              @for (s of [1,2,3,4,5]; track s) {
+                <span class="star" [class.star--filled]="s <= r">★</span>
+              }
+              <span class="rating-option__label">y más</span>
+            </button>
+          }
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ── Lista de productos ─────────────────────────────── -->
+    <section class="products-area">
+
+      @if (loading()) {
+        <app-loading-spinner message="Cargando productos..." />
+      }
+      @else if (error()) {
+        <app-error-message [message]="error()!" (retry)="loadData()" />
+      }
+      @else if (filteredProducts().length === 0) {
+        <div class="empty-state">
+          <p>No se encontraron productos con estos filtros.</p>
+          <button class="btn-reset-empty" (click)="resetFilters()" type="button">
+            Limpiar filtros
+          </button>
+        </div>
+      }
+      @else {
+        <div class="products-grid">
+          @for (product of filteredProducts(); track product.id) {
+            <app-product-card
+              [product]="product"
+              [isInCart]="isInCart(product.id)"
+              (addToCart)="onAddToCart($event)"
+            />
+          }
+        </div>
+      }
+
+    </section>
+  </div>
+
+</main>

@@ -1,0 +1,144 @@
+<div class="dashboard-page">
+
+    <header class="dash-header">
+      <div>
+        <h1 class="dash-title">Dashboard</h1>
+        <p class="dash-sub">Bienvenido de vuelta, {{ authService.user()?.username }}</p>
+      </div>
+    </header>
+
+    @if (loading()) {
+      <app-loading-spinner message="Cargando datos..." />
+    } @else {
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <!-- <div class="kpi-icon"></div> -->
+          <div>
+            <div class="kpi-label">Total productos</div>
+            <div class="kpi-value">{{ totalProducts() }}</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <!-- <div class="kpi-icon"></div> -->
+          <div>
+            <div class="kpi-label">Precio promedio</div>
+            <div class="kpi-value">{{ avgPrice() | currency:'USD':'symbol':'1.0-0' }}</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <!-- <div class="kpi-icon"></div> -->
+          <div>
+            <div class="kpi-label">Rating promedio</div>
+            <div class="kpi-value">{{ avgRating() | number:'1.1-1' }}</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <!-- <div class="kpi-icon"></div> -->
+          <div>
+            <div class="kpi-label">Categorías</div>
+            <div class="kpi-value">{{ objectKeys(categoryCounts()).length }}</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <!-- <div class="kpi-icon"></div> -->
+          <div>
+            <div class="kpi-label">Items en carrito</div>
+            <div class="kpi-value">{{ cartService.totalItems() }}</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <!-- <div class="kpi-icon"></div> -->
+          <div>
+            <div class="kpi-label">Producto más caro</div>
+            <div class="kpi-value">{{ maxPrice() | currency:'USD':'symbol':'1.0-0' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fila gráficas 1 -->
+      <div class="charts-row">
+
+        <!-- Gráfica dona — productos por categoría -->
+        <div class="chart-card">
+          <h2 class="chart-title">Productos por categoría</h2>
+          <div class="chart-legend">
+            @for (cat of objectKeys(categoryCounts()); track cat) {
+              <span class="legend-item">
+                <span class="legend-dot" [style.background]="getCategoryColor(cat)"></span>
+                {{ cat }} ({{ categoryCounts()[cat] }})
+              </span>
+            }
+          </div>
+          <div class="chart-wrapper">
+            <canvas #catChartRef
+              role="img"
+              aria-label="Gráfica de dona: distribución de productos por categoría">
+            </canvas>
+          </div>
+        </div>
+
+        <!-- Gráfica barras — rango de precios -->
+        <div class="chart-card">
+          <h2 class="chart-title">Distribución de precios</h2>
+          <div class="chart-wrapper">
+            <canvas #priceChartRef
+              role="img"
+              aria-label="Gráfica de barras: cantidad de productos por rango de precio">
+            </canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfica horizontal — top rated -->
+      <div class="chart-card chart-card--full">
+        <h2 class="chart-title">Top 5 productos mejor valorados</h2>
+        <div class="chart-wrapper chart-wrapper--tall">
+          <canvas #ratingChartRef
+            role="img"
+            aria-label="Gráfica de barras horizontales: top 5 productos por rating">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Tabla resumen -->
+      <div class="table-card">
+        <h2 class="table-title">Top 5 productos</h2>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Rating</th>
+                <th>Reseñas</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of topRated(); track p.id) {
+                <tr>
+                  <td class="td-product">
+                    <img [src]="p.image" [alt]="p.title" class="table-img" />
+                    <span>{{ p.title | slice:0:35 }}...</span>
+                  </td>
+                  <td><span class="cat-pill">{{ p.category }}</span></td>
+                  <td class="td-bold">{{ p.price | currency:'USD' }}</td>
+                  <td><span class="rating-pill">⭐ {{ p.rating.rate }}</span></td>
+                  <td class="td-muted">{{ p.rating.count }}</td>
+                  <td>
+                    <a [routerLink]="['/admin/products/edit', p.id]" class="action-btn">
+                      Editar
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    }
+</div>

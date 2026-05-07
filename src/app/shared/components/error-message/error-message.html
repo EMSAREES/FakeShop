@@ -1,0 +1,22 @@
+<div class="error-container" role="alert">
+  <!-- Ícono SVG inline — sin dependencias de icon libraries -->
+  <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="12" y1="8" x2="12" y2="12"></line>
+    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+  </svg>
+
+  <h3 class="error-title">{{ title }}</h3>
+  <p class="error-detail">{{ message }}</p>
+
+  <!-- El botón "Reintentar" emite un evento al componente padre -->
+  <!-- (click)="onRetry()" ejecuta el método al hacer clic -->
+  <button
+    *ngIf="showRetry"
+    class="retry-btn"
+    (click)="onRetry()"
+    type="button"
+  >
+    Reintentar
+  </button>
+</div>

@@ -1,0 +1,210 @@
+<div class="form-page">
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <a routerLink="/admin/dashboard" class="breadcrumb-link">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <a routerLink="/admin/products" class="breadcrumb-link">Productos</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>{{ isEditMode() ? 'Editar producto' : 'Agregar producto' }}</span>
+  </nav>
+
+  <div class="form-layout">
+
+    <!-- Formulario principal -->
+    <div class="form-card">
+      <h1 class="form-title">
+        {{ isEditMode() ? ' Editar producto' : ' Nuevo producto' }}
+      </h1>
+
+      @if (saved()) {
+        <div class="success-banner">
+          Producto {{ isEditMode() ? 'actualizado' : 'creado' }} correctamente. Redirigiendo...
+        </div>
+      }
+
+      @if (loading()) {
+        <div class="loading-form">Cargando datos del producto...</div>
+      } @else {
+
+        <!-- [formGroup] enlaza el FormGroup al elemento <form> -->
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+          <!-- Título -->
+          <div class="field">
+            <label class="field-label" for="title">
+              Título del producto <span class="required">*</span>
+            </label>
+            <input
+              id="title"
+              type="text"
+              class="field-input"
+              [class.field-input--error]="hasError('title', 'required') || hasError('title', 'minlength')"
+              formControlName="title"
+              placeholder="Ej: Camiseta casual premium azul"
+            />
+            <!-- Mensajes de error específicos por tipo de validación -->
+            @if (hasError('title', 'required')) {
+              <span class="field-error">El título es requerido</span>
+            }
+            @if (hasError('title', 'minlength')) {
+              <span class="field-error">Mínimo 5 caracteres</span>
+            }
+          </div>
+
+          <!-- Precio y Categoría en fila -->
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label" for="price">
+                Precio (USD) <span class="required">*</span>
+              </label>
+              <div class="input-prefix-wrap">
+                <span class="input-prefix">$</span>
+                <input
+                  id="price"
+                  type="number"
+                  class="field-input field-input--prefixed"
+                  [class.field-input--error]="hasError('price', 'required') || hasError('price', 'min')"
+                  formControlName="price"
+                  placeholder="0.00"
+                  step="0.01"
+                  min="0"
+                />
+              </div>
+              @if (hasError('price', 'required')) {
+                <span class="field-error">El precio es requerido</span>
+              }
+              @if (hasError('price', 'min')) {
+                <span class="field-error">El precio debe ser mayor a 0</span>
+              }
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="category">
+                Categoría <span class="required">*</span>
+              </label>
+              <select
+                id="category"
+                class="field-input"
+                [class.field-input--error]="hasError('category', 'required')"
+                formControlName="category"
+              >
+                <option value="" disabled>Selecciona una categoría</option>
+                @for (cat of categories; track cat) {
+                  <option [value]="cat">{{ cat }}</option>
+                }
+              </select>
+              @if (hasError('category', 'required')) {
+                <span class="field-error">Selecciona una categoría</span>
+              }
+            </div>
+          </div>
+
+          <!-- URL de imagen -->
+          <div class="field">
+            <label class="field-label" for="image">
+              URL de imagen <span class="required">*</span>
+            </label>
+            <input
+              id="image"
+              type="url"
+              class="field-input"
+              [class.field-input--error]="hasError('image', 'required') || hasError('image', 'pattern')"
+              formControlName="image"
+              placeholder="https://ejemplo.com/imagen.jpg"
+            />
+            @if (hasError('image', 'required')) {
+              <span class="field-error">La URL de imagen es requerida</span>
+            }
+            @if (hasError('image', 'pattern')) {
+              <span class="field-error">Debe ser una URL válida (https://...)</span>
+            }
+            <!-- Preview de la imagen si la URL es válida -->
+            @if (f['image'].valid && f['image'].value) {
+              <div class="image-preview">
+                <img
+                  [src]="f['image'].value"
+                  alt="Preview"
+                  (error)="$any($event.target).style.display='none'"
+                />
+              </div>
+            }
+          </div>
+
+          <!-- Descripción -->
+          <div class="field">
+            <label class="field-label" for="description">
+              Descripción <span class="required">*</span>
+            </label>
+            <textarea
+              id="description"
+              class="field-input field-input--textarea"
+              [class.field-input--error]="hasError('description', 'required') || hasError('description', 'minlength')"
+              formControlName="description"
+              placeholder="Describe el producto en detalle..."
+              rows="4"
+            ></textarea>
+            @if (hasError('description', 'required')) {
+              <span class="field-error">La descripción es requerida</span>
+            }
+            @if (hasError('description', 'minlength')) {
+              <span class="field-error">Mínimo 10 caracteres</span>
+            }
+            <span class="field-hint">{{ f['description'].value?.length || 0 }} caracteres</span>
+          </div>
+
+          <!-- Botones -->
+          <div class="form-actions">
+            <a routerLink="/admin/products" class="btn-cancel">Cancelar</a>
+            <button
+              type="submit"
+              class="btn-save"
+              [disabled]="saving()"
+            >
+              @if (saving()) {
+                Guardando...
+              } @else {
+                {{ isEditMode() ? ' Guardar cambios' : ' Crear producto' }}
+              }
+            </button>
+          </div>
+
+        </form>
+      }
+    </div>
+
+    <!-- Panel lateral de ayuda -->
+    <aside class="form-sidebar">
+      <div class="tip-card">
+        <h3 class="tip-title"> Consejos</h3>
+        <ul class="tip-list">
+          <li>El título debe ser descriptivo y claro</li>
+          <li>Usa imágenes con fondo blanco o transparente</li>
+          <li>La descripción ayuda al SEO del producto</li>
+          <li>El precio debe ser en dólares USD</li>
+        </ul>
+      </div>
+
+      <!-- Estado del formulario en tiempo real -->
+      <div class="form-status-card">
+        <h3 class="tip-title">Estado del formulario</h3>
+        <div class="status-item" [class.status-ok]="f['title'].valid">
+          {{ f['title'].valid ? '✅' : '⭕' }} Título
+        </div>
+        <div class="status-item" [class.status-ok]="f['price'].valid">
+          {{ f['price'].valid ? '✅' : '⭕' }} Precio
+        </div>
+        <div class="status-item" [class.status-ok]="f['category'].valid">
+          {{ f['category'].valid ? '✅' : '⭕' }} Categoría
+        </div>
+        <div class="status-item" [class.status-ok]="f['image'].valid">
+          {{ f['image'].valid ? '✅' : '⭕' }} Imagen
+        </div>
+        <div class="status-item" [class.status-ok]="f['description'].valid">
+          {{ f['description'].valid ? '✅' : '⭕' }} Descripción
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</div>

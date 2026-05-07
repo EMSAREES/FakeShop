@@ -1,0 +1,243 @@
+.form-page {
+  padding: 2rem;
+  max-width: 1000px;
+}
+
+// ─── Breadcrumb ──────────────────────────────────────────────────
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 1.5rem;
+}
+
+.breadcrumb-link { color: #1a1a2e; text-decoration: none; &:hover { text-decoration: underline; } }
+.breadcrumb-sep  { color: #ccc; }
+
+// ─── Layout dos columnas ─────────────────────────────────────────
+.form-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 1.5rem;
+  align-items: start;
+
+  @media (max-width: 800px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ─── Tarjeta del formulario ───────────────────────────────────────
+.form-card {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+.form-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 1.75rem;
+}
+
+.success-banner {
+  background: #EAF3DE;
+  color: #27500A;
+  border: 1px solid #C0DD97;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+
+.loading-form {
+  padding: 2rem;
+  text-align: center;
+  color: #888;
+}
+
+// ─── Campos ──────────────────────────────────────────────────────
+.field {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.field-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #444;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.required { color: #e74c3c; margin-left: 2px; }
+
+.field-input {
+  padding: 0.7rem 1rem;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #fff;
+
+  &:focus { border-color: #1a1a2e; }
+
+  &--error {
+    border-color: #e74c3c;
+    background: #fef2f2;
+  }
+
+  &--textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  &--prefixed { padding-left: 2rem; }
+}
+
+select.field-input { cursor: pointer; }
+
+.input-prefix-wrap {
+  position: relative;
+}
+
+.input-prefix {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 0.95rem;
+  pointer-events: none;
+}
+
+.field-error {
+  font-size: 0.8rem;
+  color: #e74c3c;
+}
+
+.field-hint {
+  font-size: 0.78rem;
+  color: #aaa;
+  text-align: right;
+}
+
+// ─── Preview imagen ───────────────────────────────────────────────
+.image-preview {
+  margin-top: 4px;
+  width: 80px;
+  height: 80px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f8f8;
+  padding: 4px;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+}
+
+// ─── Botones de acción ────────────────────────────────────────────
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.btn-cancel {
+  padding: 0.7rem 1.5rem;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  background: transparent;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: #555;
+  transition: all 0.2s;
+  &:hover { background: #f5f5f5; }
+}
+
+.btn-save {
+  padding: 0.7rem 1.75rem;
+  background: #1a1a2e;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  &:hover:not(:disabled) { opacity: 0.85; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+// ─── Sidebar ─────────────────────────────────────────────────────
+.tip-card, .form-status-card {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.tip-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 0.75rem;
+}
+
+.tip-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  li {
+    font-size: 0.82rem;
+    color: #666;
+    padding-left: 1rem;
+    position: relative;
+
+    &::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #aaa;
+    }
+  }
+}
+
+.status-item {
+  font-size: 0.82rem;
+  color: #aaa;
+  padding: 4px 0;
+  transition: color 0.2s;
+
+  &.status-ok { color: #27500A; }
+}

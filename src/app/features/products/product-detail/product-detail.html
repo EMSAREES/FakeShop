@@ -1,0 +1,166 @@
+<div class="detail-page">
+
+  <!-- Botón de regreso -->
+  <a routerLink="/products" class="back-link">
+    ← Volver a productos
+  </a>
+
+  <!-- Estados de la página -->
+  @if (loading()) {
+    <app-loading-spinner message="Cargando producto..." />
+  }
+  @else if (error()) {
+    <app-error-message [message]="error()!" (retry)="ngOnInit()" />
+  }
+  @else if (product()) {
+    <article class="detail-card">
+
+      <!-- Imagen -->
+      <div class="detail-image-wrapper">
+        <img
+          [src]="product()!.image"
+          [alt]="product()!.title"
+          class="detail-image"
+        />
+      </div>
+
+      <!-- Información del producto -->
+      <div class="detail-info">
+        <span class="detail-category">{{ product()!.category }}</span>
+        <h1 class="detail-title">{{ product()!.title }}</h1>
+
+        <!-- Rating -->
+        <div class="detail-rating">
+          <div class="stars" aria-label="Calificación {{ product()!.rating.rate }} de 5">
+            @for (star of stars; track $index) {
+              <span class="star" [class.star--filled]="star === 1" aria-hidden="true">★</span>
+            }
+          </div>
+          <span class="rating-text">
+            {{ product()!.rating.rate }} / 5 ({{ product()!.rating.count }} reseñas)
+          </span>
+        </div>
+
+        <!-- Precio -->
+        <p class="detail-price">{{ product()!.price | currency:'USD':'symbol':'1.2-2' }}</p>
+
+        <!-- Descripción -->
+        <div class="detail-description">
+          <h2 class="detail-description__title">Descripción</h2>
+          <p class="detail-description__text">{{ product()!.description }}</p>
+        </div>
+
+        <!-- Selector de cantidad -->
+        <div class="quantity-selector">
+          <button class="qty-btn" (click)="decrementQuantity()" type="button" aria-label="Reducir cantidad">−</button>
+          <span class="qty-value" aria-live="polite">{{ quantity() }}</span>
+          <button class="qty-btn" (click)="incrementQuantity()" type="button" aria-label="Aumentar cantidad">+</button>
+        </div>
+
+        <!-- Botón de carrito -->
+        <button
+          class="btn-add-to-cart"
+          [class.btn-add-to-cart--success]="addedToCart()"
+          (click)="addToCart()"
+          type="button"
+        >
+          @if (addedToCart()) {
+            ✓ ¡Agregado al carrito!
+          } @else {
+            🛒 Agregar al carrito
+          }
+        </button>
+      </div>
+
+    </article>
+  }
+
+  <!-- ── Productos similares ──────────────────────────────────── -->
+@if (relatedProducts().length > 0) {
+  <section class="related-section">
+
+    <div class="related-header">
+      <h2 class="related-title">Productos similares</h2>
+      <a [routerLink]="['/products']" [queryParams]="{ category: product()!.category }" class="related-see-all">
+        Ver todos en {{ product()!.category }} →
+      </a>
+    </div>
+
+    <div class="related-grid">
+      @for (related of relatedProducts(); track related.id) {
+        <article
+          class="related-card"
+          (click)="goToRelated(related.id)"
+          role="button"
+          tabindex="0"
+          (keydown.enter)="goToRelated(related.id)"
+          [attr.aria-label]="'Ver ' + related.title"
+        >
+          <!-- Imagen -->
+          <div class="related-image-wrap">
+            <img
+              [src]="related.image"
+              [alt]="related.title"
+              class="related-image"
+              loading="lazy"
+            />
+          </div>
+
+          <!-- Info -->
+          <div class="related-info">
+            <p class="related-name">{{ related.title | slice:0:55 }}...</p>
+
+            <!-- Mini rating -->
+            <div class="related-rating">
+              @for (s of [1,2,3,4,5]; track s) {
+                <span
+                  class="mini-star"
+                  [class.mini-star--filled]="s <= related.rating.rate"
+                >★</span>
+              }
+              <span class="mini-count">({{ related.rating.count }})</span>
+            </div>
+
+            <!-- Footer: precio + botón -->
+            <div class="related-footer">
+              <span class="related-price">
+                {{ related.price | currency:'USD':'symbol':'1.2-2' }}
+              </span>
+
+              <button
+                class="btn-related-cart"
+                [class.btn-related-cart--added]="isInCart(related.id)"
+                (click)="onAddRelatedToCart($event, related)"
+                type="button"
+                [attr.aria-label]="'Agregar ' + related.title + ' al carrito'"
+              >
+                {{ isInCart(related.id) ? '✓' : '+' }}
+              </button>
+            </div>
+          </div>
+
+        </article>
+      }
+    </div>
+
+  </section>
+}
+
+  <!-- Skeleton mientras carga los relacionados -->
+  @if (loadingRelated()) {
+    <section class="related-section">
+      <h2 class="related-title">Productos similares</h2>
+      <div class="related-grid">
+        @for (s of [1,2,3,4]; track s) {
+          <div class="related-skeleton">
+            <div class="skeleton-img"></div>
+            <div class="skeleton-line skeleton-line--lg"></div>
+            <div class="skeleton-line skeleton-line--sm"></div>
+            <div class="skeleton-line skeleton-line--md"></div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+</div>

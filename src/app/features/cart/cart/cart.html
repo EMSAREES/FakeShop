@@ -1,0 +1,81 @@
+<main class="cart-page">
+  <h1 class="cart-title">Tu Carrito</h1>
+
+  @if (!cartService.hasItems()) {
+    <!-- Carrito vacío -->
+    <div class="empty-cart">
+      <div class="empty-cart__icon" aria-hidden="true"> <img src="assets/icons/shopping-cart.png" class="icon"></div>
+      <h2 class="empty-cart__text">Tu carrito está vacío</h2>
+      <p class="empty-cart__sub">Agrega productos desde la tienda</p>
+      <a routerLink="/products" class="btn-shop">Ver productos</a>
+    </div>
+  }
+  @else {
+    <div class="cart-layout">
+
+      <!-- Lista de items -->
+      <section class="cart-items" aria-label="Items del carrito">
+        @for (item of cartService.items(); track item.product.id) {
+          <article class="cart-item">
+            <img [src]="item.product.image" [alt]="item.product.title" class="item-image" />
+
+            <div class="item-info">
+              <a [routerLink]="['/products', item.product.id]" class="item-title">
+                {{ item.product.title }}
+              </a>
+              <span class="item-category">{{ item.product.category }}</span>
+              <span class="item-unit-price">
+                {{ item.product.price | currency:'USD':'symbol':'1.2-2' }} c/u
+              </span>
+            </div>
+
+            <div class="item-quantity">
+              <button class="qty-btn" (click)="updateQty(item, -1)" type="button">−</button>
+              <span class="qty-num">{{ item.quantity }}</span>
+              <button class="qty-btn" (click)="updateQty(item, +1)" type="button">+</button>
+            </div>
+
+            <div class="item-subtotal">
+              {{ (item.product.price * item.quantity) | currency:'USD':'symbol':'1.2-2' }}
+            </div>
+
+            <button
+              class="remove-btn"
+              (click)="removeItem(item.product.id)"
+              type="button"
+              aria-label="Eliminar {{ item.product.title }}"
+            >✕</button>
+          </article>
+        }
+      </section>
+
+      <!-- Resumen del pedido -->
+      <aside class="cart-summary">
+        <h2 class="summary-title">Resumen del pedido</h2>
+
+        <div class="summary-row">
+          <span>Subtotal ({{ cartService.totalItems() }} items)</span>
+          <span>{{ cartService.totalPrice() | currency:'USD':'symbol':'1.2-2' }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Envío</span>
+          <span class="free-text">Gratis</span>
+        </div>
+
+        <div class="summary-total">
+          <span>Total</span>
+          <span>{{ cartService.totalPrice() | currency:'USD':'symbol':'1.2-2' }}</span>
+        </div>
+
+        <button class="btn-checkout" type="button">
+          Finalizar compra
+        </button>
+
+        <button class="btn-clear" (click)="clearCart()" type="button">
+          Vaciar carrito
+        </button>
+      </aside>
+
+    </div>
+  }
+</main>

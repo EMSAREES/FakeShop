@@ -1,0 +1,125 @@
+<div class="admin-page">
+
+  <!-- Modal de confirmación de eliminación -->
+  @if (deleteModal()) {
+    <div class="modal-overlay" (click)="cancelDelete()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-icon"> <img src="assets/icons/trash-can.png" class="icon"></div>
+        <h2 class="modal-title">¿Eliminar producto?</h2>
+        <p class="modal-text">
+          "{{ deleteModal()!.title | slice:0:50 }}..." será eliminado permanentemente.
+          Esta acción no se puede deshacer.
+        </p>
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="cancelDelete()" type="button">Cancelar</button>
+          <button class="btn-delete" (click)="deleteProduct()" type="button">Sí, eliminar</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Header de la sección -->
+  <div class="section-header">
+    <div>
+      <h1 class="section-title">Gestión de productos</h1>
+      <p class="section-sub">{{ filteredProducts().length }} productos</p>
+    </div>
+    <a routerLink="/admin/products/new" class="btn-add">
+      + Agregar producto
+    </a>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters-bar">
+    <input
+      type="search"
+      class="search-input"
+      placeholder="Buscar producto..."
+      (input)="onSearch($event)"
+    />
+    <select class="filter-select" (change)="onFilterCategory($event)">
+      <option value="all">Todas las categorías</option>
+      @for (cat of categories(); track cat) {
+        <option [value]="cat">{{ cat }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- Tabla -->
+  @if (loading()) {
+    <div class="loading-wrap">Cargando...</div>
+  } @else {
+    <div class="table-wrap">
+      <table class="products-table">
+        <thead>
+          <tr>
+            <th style="width:50px">ID</th>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Rating</th>
+            <th>Estado</th>
+            <th style="width:200px">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of filteredProducts(); track product.id) {
+            <tr [class.row--inactive]="product.status === 'inactive'">
+              <td class="td-id">{{ product.id }}</td>
+              <td class="td-product">
+                <img [src]="product.image" [alt]="product.title" class="prod-img" />
+                <div class="prod-info">
+                  <span class="prod-title">{{ product.title | slice:0:40 }}...</span>
+                </div>
+              </td>
+              <td><span class="cat-pill">{{ product.category }}</span></td>
+              <td class="td-price">{{ product.price | currency:'USD' }}</td>
+              <td>
+                <div class="rating-cell">
+                  <span class="star-val">{{ product.rating.rate }}</span>
+                  <span class="star-icon">⭐</span>
+                  <span class="review-count">({{ product.rating.count }})</span>
+                </div>
+              </td>
+              <td>
+                <span
+                  class="status-badge"
+                  [class.status-badge--active]="product.status === 'active'"
+                  [class.status-badge--inactive]="product.status === 'inactive'"
+                  [class.status-badge--low]="product.status === 'low-stock'"
+                >
+                  {{ getStatusLabel(product.status) }}
+                </span>
+              </td>
+              <td>
+                <div class="actions-cell">
+                  <a
+                    [routerLink]="['/admin/products/edit', product.id]"
+                    class="action-btn action-btn--edit"
+                  > Editar</a>
+
+                  <button
+                    class="action-btn"
+                    [class.action-btn--deactivate]="product.status === 'active'"
+                    [class.action-btn--activate]="product.status !== 'active'"
+                    (click)="toggleStatus(product)"
+                    type="button"
+                  >
+                    {{ product.status === 'active' ? ' Desactivar' : 'Activar' }}
+                  </button>
+
+                  <button
+                    class="action-btn action-btn--delete"
+                    (click)="confirmDelete(product)"
+                    type="button"
+                  >🗑</button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>
